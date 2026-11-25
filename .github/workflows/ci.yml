@@ -1,0 +1,34 @@
+# Runs typecheck, lint and unit tests on every push and pull request.
+# Database integration tests (db/*.test.ts) skip themselves here because
+# RLS_TEST_DATABASE_URL is not set: CI never touches a Supabase project.
+name: CI
+
+on:
+  push:
+    branches: [master, 'feature/**']
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Lint
+        run: npm run lint
+      - name: Unit tests
+        run: npm test

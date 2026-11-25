@@ -1,0 +1,2 @@
+ALTER TABLE "invoice_lines" ADD COLUMN "unit_code" varchar(3) DEFAULT 'C62' NOT NULL;--> statement-breakpoint
+ALTER TABLE "invoice_lines" ADD CONSTRAINT "invoice_lines_unit_code_valid" CHECK ("invoice_lines"."unit_code" IN ('C62','HUR','LS','SET','LTR','KGM','MTR'));

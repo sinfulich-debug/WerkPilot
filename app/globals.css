@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Motion: one easing curve, a few durations.
+ * Feedback 120-180ms, menus 160-220ms, entrances and sheets 300-500ms. Only opacity and transform animate.
+ */
+:root {
+  color-scheme: light;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 160ms;
+  --dur-enter: 420ms;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-slate-100 text-slate-900 antialiased;
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  table,
+  input,
+  time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button {
+    transition-property: color, background-color, border-color, opacity, transform;
+    transition-duration: var(--dur-fast);
+    transition-timing-function: var(--ease-out);
+  }
+
+  /* Press feedback: a tiny scale down, never a bounce. */
+  button:not(:disabled):active {
+    transform: scale(0.98);
+  }
+
+  :focus-visible {
+    outline: 2px solid theme('colors.accent.600');
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: theme('colors.accent.100');
+  }
+}
+
+@layer components {
+  /* German number plate, the product's signature detail. */
+  .plate {
+    @apply inline-flex h-6 select-all items-stretch overflow-hidden whitespace-nowrap rounded-[4px] border border-slate-900/70 bg-white align-middle font-mono text-[13px] font-medium leading-6 text-slate-900;
+  }
+  .plate-eu {
+    @apply flex w-3.5 shrink-0 items-end justify-center bg-plate-eu pb-px text-[8px] font-medium leading-none text-white;
+  }
+  .plate-text {
+    @apply px-1.5 uppercase;
+  }
+}
+
+@layer utilities {
+  /* One entrance on load: main content fades and rises 8px, children staggered 50ms, max six. */
+  .wp-stagger > * {
+    animation: wp-enter var(--dur-enter) var(--ease-out) both;
+  }
+  .wp-stagger > *:nth-child(2) { animation-delay: 50ms; }
+  .wp-stagger > *:nth-child(3) { animation-delay: 100ms; }
+  .wp-stagger > *:nth-child(4) { animation-delay: 150ms; }
+  .wp-stagger > *:nth-child(5) { animation-delay: 200ms; }
+  .wp-stagger > *:nth-child(n + 6) { animation-delay: 250ms; }
+
+  .wp-enter {
+    animation: wp-enter var(--dur-enter) var(--ease-out) both;
+  }
+
+  /* Dialogs: the backdrop fades, the sheet rises from below (from the bottom edge on phones). */
+  .wp-overlay {
+    animation: wp-fade 220ms var(--ease-out) both;
+  }
+  .wp-sheet {
+    animation: wp-sheet 360ms var(--ease-out) both;
+  }
+  @media (max-width: 639px) {
+    .wp-sheet {
+      animation-name: wp-sheet-mobile;
+    }
+  }
+}
+
+@keyframes wp-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes wp-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes wp-sheet {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes wp-sheet-mobile {
+  from {
+    opacity: 0.6;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+  button:not(:disabled):active {
+    transform: none;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: theme('colors.slate.300');
+  border: 3px solid theme('colors.slate.100');
+  border-radius: 8px;
+}

@@ -1,0 +1,4 @@
+ALTER TABLE "tenant_profiles" ADD COLUMN "hourly_rate_cents" integer DEFAULT 9500 NOT NULL;--> statement-breakpoint
+ALTER TABLE "tenant_profiles" ADD COLUMN "whatsapp_template" text;--> statement-breakpoint
+ALTER TABLE "tenant_profiles" ADD CONSTRAINT "tenant_profiles_hourly_rate_range" CHECK ("tenant_profiles"."hourly_rate_cents" >= 0 AND "tenant_profiles"."hourly_rate_cents" <= 1000000);--> statement-breakpoint
+ALTER TABLE "tenant_profiles" ADD CONSTRAINT "tenant_profiles_whatsapp_template_length" CHECK ("tenant_profiles"."whatsapp_template" IS NULL OR char_length("tenant_profiles"."whatsapp_template") <= 1000);
